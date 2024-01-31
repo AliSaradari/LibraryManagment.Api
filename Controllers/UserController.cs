@@ -47,7 +47,7 @@ namespace LibraryManagment.Api.Controllers
             _context.SaveChanges();
         }
         [HttpGet("show-user")]
-        public GetUserDto ShowUser([FromQuery] string username)
+        public GetUserDto? ShowUser([FromQuery] string username)
         {
             return _context.Users.Where(_ => _.Name == username).Select(u => new GetUserDto
             {
