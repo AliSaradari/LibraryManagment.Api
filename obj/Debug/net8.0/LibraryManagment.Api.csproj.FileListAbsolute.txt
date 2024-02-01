@@ -139,3 +139,4 @@ D:\VS Save\LibraryManagment.Api\obj\Debug\net8.0\refint\LibraryManagment.Api.dll
 D:\VS Save\LibraryManagment.Api\obj\Debug\net8.0\LibraryManagment.Api.pdb
 D:\VS Save\LibraryManagment.Api\obj\Debug\net8.0\LibraryManagment.Api.genruntimeconfig.cache
 D:\VS Save\LibraryManagment.Api\obj\Debug\net8.0\ref\LibraryManagment.Api.dll
+D:\VS Save\LibraryManagment.Api\obj\Debug\net8.0\LibraryManagment.Api.sourcelink.json

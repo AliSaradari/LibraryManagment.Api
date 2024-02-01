@@ -1,5 +1,6 @@
-﻿using LibraryManagment.Api.Dto;
-using LibraryManagment.Api.EntitiyMaps;
+﻿using LibraryManagment.Api.EntitiyMaps;
+using LibraryManagment.Api.Service.Books;
+using LibraryManagment.Api.Service.Books.Dto;
 using LibraryManagment.Entities.Entities;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,82 +11,31 @@ namespace LibraryManagment.Api.Controllers
     [ApiController]
     public class BookController : ControllerBase
     {
-        private readonly EFDataContext _context;
+        private readonly BookService _bookService;
         public BookController()
         {
-            _context = new EFDataContext();
+            _bookService = new BookService();
         }
         [HttpPost("add-book")]
-        public void AddBook([FromQuery] AddBookDto bookDto)
+        public void AddBook([FromBody] AddBookDto bookDto)
         {
-            var book = new Book()
-            {
-                Title = bookDto.Title,
-                Author = bookDto.Author,
-                Genre = bookDto.Genre,
-                PublishYear = bookDto.PublishYear
-            };
-            _context.Books.Add(book);
-            _context.SaveChanges();
+            _bookService.AddBook(bookDto);
         }
         [HttpPatch("update-book")]
-        public void UpdateBook([FromQuery] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
+        public void UpdateBook([FromBody] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
         {
-            var book = _context.Books.FirstOrDefault(_ => _.Title == titleForUpdate);
-            if (updateBookDto.Genre != null)
-            {
-                book.Genre = updateBookDto.Genre;
-            }
-            if (updateBookDto.PublishYear != null)
-            {
-                book.PublishYear = updateBookDto.PublishYear;
-            }
-            if (updateBookDto.Author != null)
-            {
-                book.Author = updateBookDto.Author;
-            }
-            _context.SaveChanges();
+            _bookService.UpdateBook(titleForUpdate, updateBookDto);
         }
         [HttpDelete("delete-book")]
-        public void DeleteBook([FromQuery] string title)
+        public void DeleteBook([FromBody] string title)
         {
-            _context.Books.Remove(_context.Books.FirstOrDefault(_ => _.Title == title));
-            _context.SaveChanges();
+            _bookService?.DeleteBook(title);
         }
         [HttpGet("show-books")]
-        public GetBookDto ShowBooks([FromQuery] string? title, [FromQuery] string? genre)
+        public List<GetBookDto?> ShowBooks([FromQuery] string? title, [FromQuery] string? genre)
         {
-            if(title != null)
-            {
-                var book = _context.Books.FirstOrDefault(_ => _.Title == title);
-                var dto = new GetBookDto()
-                {
-                    Title = book.Title,
-                    Genre = book.Genre,
-                    Author = book.Author,
-                    PublishYear = book.PublishYear,
-                };
-                return dto;
-            }
-            else
-            {
-                var book = _context.Books.FirstOrDefault(_ => _.Genre == genre);
-                var dto = new GetBookDto()
-                {
-                    Title = book.Title,
-                    Genre = book.Genre,
-                    Author = book.Author,
-                    PublishYear = book.PublishYear,
-                };
-                return dto;
-            }
-            
-            
-
-
-
-
-
+            return
+            _bookService.ShowBooks(title, genre);
         }
     }
 }

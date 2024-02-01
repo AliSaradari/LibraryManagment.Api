@@ -1,4 +1,4 @@
-﻿namespace LibraryManagment.Api.Dto
+﻿namespace LibraryManagment.Api.Service.Books.Dto
 {
     public class GetBookDto
     {
