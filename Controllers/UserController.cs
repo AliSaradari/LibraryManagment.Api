@@ -1,13 +1,10 @@
-﻿using LibraryManagment.Api.EntitiyMaps;
-using LibraryManagment.Api.Service.Books;
-using LibraryManagment.Api.Service.Users;
+﻿using LibraryManagment.Api.Service.Users;
 using LibraryManagment.Api.Service.Users.Dto;
-using LibraryManagment.Entities.Entities;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagment.Api.Controllers
 {
-    [Route("api/User")]
+    [Route("api/user")]
     [ApiController]
     public class UserController : ControllerBase
     {
@@ -15,20 +12,20 @@ namespace LibraryManagment.Api.Controllers
         public UserController()
         {
             _userService = new UserService();
-            
+
         }
         [HttpPost("add-user")]
         public void AddUser([FromBody] AddUserDto userDto)
         {
             _userService.AddUser(userDto);
         }
-        [HttpPatch("update-book")]
-        public void UpdateBook([FromBody] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
+        [HttpPatch("update-user")]
+        public void UpdateUser([FromQuery] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
         {
-            _userService.UpdateBook(usernameForUpdate, updateUserDto);
+            _userService.UpdateUser(usernameForUpdate, updateUserDto);
         }
         [HttpDelete("delete-user")]
-        public void DeleteUser([FromBody] string username)
+        public void DeleteUser([FromQuery] string username)
         {
             _userService.DeleteUser(username);
         }
@@ -37,6 +34,12 @@ namespace LibraryManagment.Api.Controllers
         {
             return _userService.ShowUser(username);
         }
+        [HttpGet("show-user-books")]
+        public List<GetUserBooksDto>? ShowUserBooks([FromQuery] string username)
+        {
+            return _userService.ShowUserBooks(username);
+        }
+
     }
 }
 

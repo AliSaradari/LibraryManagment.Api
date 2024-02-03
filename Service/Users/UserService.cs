@@ -8,7 +8,7 @@ namespace LibraryManagment.Api.Service.Users
     public class UserService
     {
         EFDataContext _context = new EFDataContext();
-        public void AddUser([FromQuery] AddUserDto userDto)
+        public void AddUser([FromBody] AddUserDto userDto)
         {
             var user = new User()
             {
@@ -19,7 +19,7 @@ namespace LibraryManagment.Api.Service.Users
             _context.Users.Add(user);
             _context.SaveChanges();
         }
-        public void UpdateBook([FromQuery] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
+        public void UpdateUser([FromQuery] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
         {
             var user = _context.Users.FirstOrDefault(_ => _.Name == usernameForUpdate);
             if (updateUserDto.Name != null)
@@ -45,6 +45,16 @@ namespace LibraryManagment.Api.Service.Users
                 Email = u.Email,
                 MembershipDate = u.MembershipDate
 
+            }).ToList();
+        }
+        //Fix The problem of showing the names of duplicate books
+        public List<GetUserBooksDto>? ShowUserBooks([FromQuery] string username)
+        {
+            var userId = _context.Users.FirstOrDefault(_ => _.Name == username).Id;
+            return _context.RentedBooks.Where(_ => _.UserId == userId).Select(b => new GetUserBooksDto
+            {
+                Title = _context.Books.FirstOrDefault(_ => _.Id == b.Id).Title,
+                Condition = b.Condition
             }).ToList();
         }
     }

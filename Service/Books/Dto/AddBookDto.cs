@@ -12,6 +12,8 @@ namespace LibraryManagment.Api.Service.Books.Dto
         public string PublishYear { get; set; }
         [Required]
         public string Author { get; set; }
+        [Required]
+        public int Count { get; set; }
 
     }
 }

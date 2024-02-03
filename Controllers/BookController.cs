@@ -1,8 +1,5 @@
-﻿using LibraryManagment.Api.EntitiyMaps;
-using LibraryManagment.Api.Service.Books;
+﻿using LibraryManagment.Api.Service.Books;
 using LibraryManagment.Api.Service.Books.Dto;
-using LibraryManagment.Entities.Entities;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LibraryManagment.Api.Controllers
@@ -21,13 +18,13 @@ namespace LibraryManagment.Api.Controllers
         {
             _bookService.AddBook(bookDto);
         }
-        [HttpPatch("update-book")]
-        public void UpdateBook([FromBody] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
+        [HttpPatch("update-book/{titleForUpdate}")]
+        public void UpdateBook([FromQuery] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
         {
             _bookService.UpdateBook(titleForUpdate, updateBookDto);
         }
-        [HttpDelete("delete-book")]
-        public void DeleteBook([FromBody] string title)
+        [HttpDelete("delete-book/{title}")]
+        public void DeleteBook([FromRoute] string title)
         {
             _bookService?.DeleteBook(title);
         }
@@ -36,6 +33,16 @@ namespace LibraryManagment.Api.Controllers
         {
             return
             _bookService.ShowBooks(title, genre);
+        }
+        [HttpPost("rent-book")]
+        public void RentBook([FromBody] RentBookDto dto)
+        {
+            _bookService.RentBook(dto);
+        }
+        [HttpPatch("return-book")]
+        public void ReturnBook([FromBody] ReturnBookDto dto)
+        {
+            _bookService.ReturnBook(dto);
         }
     }
 }

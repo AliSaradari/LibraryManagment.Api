@@ -8,12 +8,14 @@ namespace LibraryManagment.Api.EntitiyMaps
     {
         public void Configure(EntityTypeBuilder<Book> _)
         {
+            _.ToTable("Books");
             _.HasKey(_ => _.Id);
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Title).IsRequired().HasMaxLength(50);
-            _.Property(_ => _.Author).IsRequired().HasMaxLength(50);
             _.Property(_ => _.PublishYear).IsRequired().HasMaxLength(50);
-            _.Property(_ => _.Author).IsRequired().HasMaxLength(50);
+            _.Property(_ => _.Count).IsRequired();
+            _.Property(_ => _.RentedCount).IsRequired().HasDefaultValue(0);
+
 
 
         }

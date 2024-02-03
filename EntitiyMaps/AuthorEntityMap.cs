@@ -4,16 +4,19 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace LibraryManagment.Api.EntitiyMaps
 {
-    public class UserEntityMap : IEntityTypeConfiguration<User>
+    public class AuthorEntityMap : IEntityTypeConfiguration<Author>
     {
-        public void Configure(EntityTypeBuilder<User> _)
+        public void Configure(EntityTypeBuilder<Author> _)
         {
-            _.ToTable("Users");
+            _.ToTable("Authors");
             _.HasKey(_ => _.Id);
             _.Property(_ => _.Id).ValueGeneratedOnAdd();
             _.Property(_ => _.Name).IsRequired().HasMaxLength(50);
-            _.Property(_ => _.Email).IsRequired().HasMaxLength(50);
-            _.Property(_ => _.MembershipDate).IsRequired();
+
+            _.HasMany(_ => _.books)
+                .WithOne(_ => _.Author)
+                .HasForeignKey(_ => _.AuthorId)
+                .OnDelete(DeleteBehavior.NoAction);
         }
     }
 }

@@ -2,31 +2,50 @@
 using LibraryManagment.Api.Service.Books.Dto;
 using LibraryManagment.Entities.Entities;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace LibraryManagment.Api.Service.Books
 {
     public class BookService
     {
         EFDataContext _context = new EFDataContext();
+
         public void AddBook([FromBody] AddBookDto bookDto)
         {
+            var authorExist = _context.Authors.Any(_ => _.Name == bookDto.Author);
+            if (authorExist == false)
+            {
+                var author = new Author { Name = bookDto.Author };
+                _context.Authors.Add(author);
+                _context.SaveChanges();
+            }
+            var genreExist = _context.Genres.Any(_ => _.Name == bookDto.Genre);
+            if (genreExist == false)
+            {
+                var genre = new Genre { Name = bookDto.Genre };
+                _context.Genres.Add(genre);
+                _context.SaveChanges();
+            }
+            var bookAuthor = _context.Authors.FirstOrDefault(_ => _.Name == bookDto.Author);
+            var bookGenre = _context.Genres.FirstOrDefault(_ => _.Name == bookDto.Genre);
             var book = new Book()
             {
                 Title = bookDto.Title,
-                Author = bookDto.Author,
-                Genre = bookDto.Genre,
-                PublishYear = bookDto.PublishYear
+                AuthorId = bookAuthor.Id,
+                GenreId = bookGenre.Id,
+                PublishYear = bookDto.PublishYear,
+                Count = bookDto.Count,
             };
             _context.Books.Add(book);
             _context.SaveChanges();
         }
-        public void UpdateBook([FromBody] string titleForUpdate, [FromBody] UpdateBookDto updateBookDto)
+        public void UpdateBook([FromRoute] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
         {
             var book = _context.Books.FirstOrDefault(_ => _.Title == titleForUpdate);
+
             if (updateBookDto.Genre != null)
             {
-                book.Genre = updateBookDto.Genre;
+                var newGenre = _context.Genres.FirstOrDefault(_ => _.Name == updateBookDto.Genre);
+                book.GenreId = newGenre.Id;
             }
             if (updateBookDto.PublishYear != null)
             {
@@ -34,39 +53,95 @@ namespace LibraryManagment.Api.Service.Books
             }
             if (updateBookDto.Author != null)
             {
-                book.Author = updateBookDto.Author;
+                var newAuthor = _context.Authors.FirstOrDefault(_ => _.Name == updateBookDto.Author);
+                book.AuthorId = newAuthor.Id;
+            }
+            if (updateBookDto.Count != null)
+            {
+                book.Count = (int)updateBookDto.Count;
             }
             _context.SaveChanges();
         }
-        public void DeleteBook([FromBody] string title)
+        public void DeleteBook([FromRoute] string title)
         {
             _context.Books.Remove(_context.Books.FirstOrDefault(_ => _.Title == title));
             _context.SaveChanges();
         }
         public List<GetBookDto> ShowBooks([FromQuery] string? title, [FromQuery] string genre)
         {
+
             if (title != null)
             {
                 var book = _context.Books.Where(_ => _.Title == title).Select(b => new GetBookDto
                 {
                     Title = b.Title,
-                    Genre = b.Genre,
-                    Author = b.Author,
-                    PublishYear = b.PublishYear
+                    Genre = _context.Genres.FirstOrDefault(_ => _.Id == b.GenreId).Name,
+                    Author = _context.Authors.FirstOrDefault(_ => _.Id == b.AuthorId).Name,
+                    PublishYear = b.PublishYear,
+                    Count = b.Count,
+                    RentedCount = b.RentedCount,
                 }).ToList();
                 return book;
             }
             else
             {
-                var book = _context.Books.Where(_ => _.Genre == genre).Select(b => new GetBookDto
+                var GenreId = _context.Genres.FirstOrDefault(_ => _.Name == genre).Id;
+                var book = _context.Books.Where(_ => _.GenreId == GenreId).Select(b => new GetBookDto
                 {
                     Title = b.Title,
-                    Genre = b.Genre,
-                    Author = b.Author,
-                    PublishYear = b.PublishYear
+                    Genre = _context.Genres.FirstOrDefault(_ => _.Id == b.GenreId).Name,
+                    Author = _context.Authors.FirstOrDefault(_ => _.Id == b.AuthorId).Name,
+                    PublishYear = b.PublishYear,
+                    Count = b.Count,
+                    RentedCount = b.RentedCount,
                 }).ToList();
                 return book;
             }
+        }
+        public void RentBook([FromBody] RentBookDto dto)
+        {
+            var userId = _context.Users.FirstOrDefault(_ => _.Name == dto.UserName).Id;
+            var bookId = _context.Books.FirstOrDefault(_ => _.Title == dto.BookTitle).Id;
+            var validRentedCount = _context.RentedBooks.Where(_ => _.UserId == userId).Where(_ => _.Condition == BookCondition.Rented).Count();
+            var book = _context.Books.FirstOrDefault(_ => _.Id == bookId);
+            var bookCount = book.Count;
+            if (bookCount > 0)
+            {
+                if (validRentedCount < 4)
+                {
+                    var rentBook = new RentedBook()
+                    {
+                        Condition = BookCondition.Rented,
+                        UserId = _context.Users.FirstOrDefault(_ => _.Name == dto.UserName).Id,
+                        BookId = _context.Books.FirstOrDefault(_ => _.Title == dto.BookTitle).Id,
+                    };
+                    book.RentedCount++;
+                    book.Count--;
+                    _context.RentedBooks.Add(rentBook);
+                    _context.SaveChanges();
+                }
+                else
+                {
+                    throw new Exception("The user cannot rent more than 4 books at the same time.");
+                }
+            }
+            else
+            {
+                throw new Exception("The book is out of stock");
+            }
+
+
+        }
+        public void ReturnBook([FromBody]ReturnBookDto dto)
+        {
+            var userId = _context.Users.FirstOrDefault(_ => _.Name == dto.UserName).Id;
+            var bookId = _context.Books.FirstOrDefault(_ => _.Title == dto.BookTitle).Id;
+            var book = _context.Books.FirstOrDefault(_ => _.Id == bookId);
+            book.RentedCount--;
+            book.Count++;
+            var rentedBook = _context.RentedBooks.Where(_ => _.UserId == userId).FirstOrDefault(_ => _.BookId == bookId);
+            rentedBook.Condition = BookCondition.BroughtBack;
+            _context.SaveChanges();
         }
     }
 }
