@@ -18,10 +18,15 @@ namespace LibraryManagment.Api.Controllers
         {
             _genreService.AddGenre(dto);
         }
-        [HttpDelete("delete-genre/{name}")]
-        public void DeleteGenre([FromRoute]string name)
+        [HttpGet("show-genres")]
+        public List<GetGenreDto> ShowGenres()
         {
-            _genreService.DeleteGenre(name);
+            return _genreService.ShowGenres();
+        }
+        [HttpDelete("delete-genre/{id}")]
+        public void DeleteGenre([FromRoute] int id)
+        {
+            _genreService.DeleteGenre(id);
         }
     }
 }

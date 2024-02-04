@@ -1,5 +1,7 @@
 ﻿using LibraryManagment.Api.Service.Authors;
 using LibraryManagment.Api.Service.Authors.Dto;
+using LibraryManagment.Api.Service.Genres.Dto;
+using LibraryManagment.Api.Service.Genres;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,10 +21,15 @@ namespace LibraryManagment.Api.Controllers
         {
             _authorService.AddAuthor(dto);
         }
-        [HttpDelete("delete-author/{name}")]
-        public void DeleteAuthor([FromRoute]string name)
+        [HttpGet("show-authors")]
+        public List<GetAuthorDto> ShowAuthors()
         {
-            _authorService.DeleteAuthor(name);
+            return _authorService.ShowAuthors();
+        }
+        [HttpDelete("delete-author/{id}")]
+        public void DeleteAuthor([FromRoute] int id)
+        {
+            _authorService.DeleteAuthor(id);
         }
 
     }

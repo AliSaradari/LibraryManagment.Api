@@ -18,15 +18,15 @@ namespace LibraryManagment.Api.Controllers
         {
             _bookService.AddBook(bookDto);
         }
-        [HttpPatch("update-book/{titleForUpdate}")]
-        public void UpdateBook([FromQuery] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
+        [HttpPatch("update-book/{idForUpdate}")]
+        public void UpdateBook([FromRoute] int idForUpdate, [FromQuery] UpdateBookDto updateBookDto)
         {
-            _bookService.UpdateBook(titleForUpdate, updateBookDto);
+            _bookService.UpdateBook(idForUpdate, updateBookDto);
         }
-        [HttpDelete("delete-book/{title}")]
-        public void DeleteBook([FromRoute] string title)
+        [HttpDelete("delete-book/{id}")]
+        public void DeleteBook([FromRoute] int id)
         {
-            _bookService?.DeleteBook(title);
+            _bookService?.DeleteBook(id);
         }
         [HttpGet("show-books")]
         public List<GetBookDto?> ShowBooks([FromQuery] string? title, [FromQuery] string? genre)

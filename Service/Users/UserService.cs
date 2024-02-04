@@ -19,9 +19,9 @@ namespace LibraryManagment.Api.Service.Users
             _context.Users.Add(user);
             _context.SaveChanges();
         }
-        public void UpdateUser([FromQuery] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
+        public void UpdateUser([FromRoute] int idForUpdate, [FromQuery] UpdateUserDto updateUserDto)
         {
-            var user = _context.Users.FirstOrDefault(_ => _.Name == usernameForUpdate);
+            var user = _context.Users.FirstOrDefault(_ => _.Id == idForUpdate);
             if (updateUserDto.Name != null)
             {
                 user.Name = updateUserDto.Name;
@@ -32,28 +32,45 @@ namespace LibraryManagment.Api.Service.Users
             }
             _context.SaveChanges();
         }
-        public void DeleteUser([FromQuery] string username)
+        public void DeleteUser([FromRoute] int id)
         {
-            _context.Users.Remove(_context.Users.FirstOrDefault(_ => _.Name == username));
+            _context.Users.Remove(_context.Users.FirstOrDefault(_ => _.Id == id));
             _context.SaveChanges();
         }
-        public List<GetUserDto>? ShowUser([FromQuery] string username)
+        public List<GetUserDto>? ShowUser([FromQuery] string? username)
         {
-            return _context.Users.Where(_ => _.Name == username).Select(u => new GetUserDto
+            if (username != null)
             {
-                Name = u.Name,
-                Email = u.Email,
-                MembershipDate = u.MembershipDate
+                return _context.Users.Where(_ => _.Name == username).Select(u => new GetUserDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    MembershipDate = u.MembershipDate
 
-            }).ToList();
+                }).ToList();
+            }
+            else
+            {
+                return _context.Users.Select(u => new GetUserDto
+                {
+                    Id = u.Id,
+                    Name = u.Name,
+                    Email = u.Email,
+                    MembershipDate = u.MembershipDate
+
+                }).ToList();
+            }
+
         }
-        //Fix The problem of showing the names of duplicate books
         public List<GetUserBooksDto>? ShowUserBooks([FromQuery] string username)
         {
             var userId = _context.Users.FirstOrDefault(_ => _.Name == username).Id;
             return _context.RentedBooks.Where(_ => _.UserId == userId).Select(b => new GetUserBooksDto
             {
-                Title = _context.Books.FirstOrDefault(_ => _.Id == b.Id).Title,
+                Id = b.Id,
+                BookId = b.BookId,
+                Title = _context.Books.FirstOrDefault(_ => _.Id == b.BookId).Title,
                 Condition = b.Condition
             }).ToList();
         }

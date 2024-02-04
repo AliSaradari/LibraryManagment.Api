@@ -38,9 +38,9 @@ namespace LibraryManagment.Api.Service.Books
             _context.Books.Add(book);
             _context.SaveChanges();
         }
-        public void UpdateBook([FromRoute] string titleForUpdate, [FromQuery] UpdateBookDto updateBookDto)
+        public void UpdateBook([FromRoute] int idForUpdate, [FromQuery] UpdateBookDto updateBookDto)
         {
-            var book = _context.Books.FirstOrDefault(_ => _.Title == titleForUpdate);
+            var book = _context.Books.FirstOrDefault(_ => _.Id == idForUpdate);
 
             if (updateBookDto.Genre != null)
             {
@@ -62,9 +62,9 @@ namespace LibraryManagment.Api.Service.Books
             }
             _context.SaveChanges();
         }
-        public void DeleteBook([FromRoute] string title)
-        {
-            _context.Books.Remove(_context.Books.FirstOrDefault(_ => _.Title == title));
+        public void DeleteBook([FromRoute] int id)
+        {   
+            _context.Books.Remove(_context.Books.FirstOrDefault(_ => _.Id == id));
             _context.SaveChanges();
         }
         public List<GetBookDto> ShowBooks([FromQuery] string? title, [FromQuery] string genre)
@@ -74,6 +74,22 @@ namespace LibraryManagment.Api.Service.Books
             {
                 var book = _context.Books.Where(_ => _.Title == title).Select(b => new GetBookDto
                 {
+                    Id = b.Id,
+                    Title = b.Title,
+                    Genre = _context.Genres.FirstOrDefault(_ => _.Id == b.GenreId).Name,
+                    Author = _context.Authors.FirstOrDefault(_ => _.Id == b.AuthorId).Name,
+                    PublishYear = b.PublishYear,
+                    Count = b.Count,
+                    RentedCount = b.RentedCount,
+                }).ToList();
+                return book;
+            }
+            else if(genre != null)
+            {
+                var GenreId = _context.Genres.FirstOrDefault(_ => _.Name == genre).Id;
+                var book = _context.Books.Where(_ => _.GenreId == GenreId).Select(b => new GetBookDto
+                {
+                    Id = b.Id,
                     Title = b.Title,
                     Genre = _context.Genres.FirstOrDefault(_ => _.Id == b.GenreId).Name,
                     Author = _context.Authors.FirstOrDefault(_ => _.Id == b.AuthorId).Name,
@@ -85,17 +101,17 @@ namespace LibraryManagment.Api.Service.Books
             }
             else
             {
-                var GenreId = _context.Genres.FirstOrDefault(_ => _.Name == genre).Id;
-                var book = _context.Books.Where(_ => _.GenreId == GenreId).Select(b => new GetBookDto
+                return _context.Books.Select(b => new GetBookDto
                 {
+                    Id = b.Id,
                     Title = b.Title,
                     Genre = _context.Genres.FirstOrDefault(_ => _.Id == b.GenreId).Name,
                     Author = _context.Authors.FirstOrDefault(_ => _.Id == b.AuthorId).Name,
-                    PublishYear = b.PublishYear,
                     Count = b.Count,
                     RentedCount = b.RentedCount,
+                    PublishYear = b.PublishYear,
+
                 }).ToList();
-                return book;
             }
         }
         public void RentBook([FromBody] RentBookDto dto)
@@ -132,7 +148,7 @@ namespace LibraryManagment.Api.Service.Books
 
 
         }
-        public void ReturnBook([FromBody]ReturnBookDto dto)
+        public void ReturnBook([FromBody] ReturnBookDto dto)
         {
             var userId = _context.Users.FirstOrDefault(_ => _.Name == dto.UserName).Id;
             var bookId = _context.Books.FirstOrDefault(_ => _.Title == dto.BookTitle).Id;

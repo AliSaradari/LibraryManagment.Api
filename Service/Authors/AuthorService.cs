@@ -15,9 +15,17 @@ namespace LibraryManagment.Api.Service.Authors
             _context.Authors.Add(author);
             _context.SaveChanges();
         }
-        public void DeleteAuthor([FromRoute] string name)
+        public List<GetAuthorDto> ShowAuthors()
         {
-            var auhtor = _context.Authors.Remove(_context.Authors.FirstOrDefault(_ => _.Name == name));
+            return _context.Authors.Select(a => new GetAuthorDto()
+            {
+                Id = a.Id,
+                Name = a.Name,
+            }).ToList();
+        }
+        public void DeleteAuthor([FromRoute] int id)
+        {
+            var auhtor = _context.Authors.Remove(_context.Authors.FirstOrDefault(_ => _.Id == id));
             _context.SaveChanges();
         }
     }

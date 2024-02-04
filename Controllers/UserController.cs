@@ -19,23 +19,23 @@ namespace LibraryManagment.Api.Controllers
         {
             _userService.AddUser(userDto);
         }
-        [HttpPatch("update-user")]
-        public void UpdateUser([FromQuery] string usernameForUpdate, [FromQuery] UpdateUserDto updateUserDto)
+        [HttpPatch("update-user/{idForUpdate}")]
+        public void UpdateUser([FromRoute] int idForUpdate, [FromQuery] UpdateUserDto updateUserDto)
         {
-            _userService.UpdateUser(usernameForUpdate, updateUserDto);
+            _userService.UpdateUser(idForUpdate, updateUserDto);
         }
-        [HttpDelete("delete-user")]
-        public void DeleteUser([FromQuery] string username)
+        [HttpDelete("delete-user/{id}")]
+        public void DeleteUser([FromRoute] int id)
         {
-            _userService.DeleteUser(username);
+            _userService.DeleteUser(id);
         }
         [HttpGet("show-user")]
-        public List<GetUserDto>? ShowUser([FromQuery] string username)
+        public List<GetUserDto>? ShowUser([FromQuery] string? username)
         {
             return _userService.ShowUser(username);
         }
         [HttpGet("show-user-books")]
-        public List<GetUserBooksDto>? ShowUserBooks([FromQuery] string username)
+        public List<GetUserBooksDto>? ShowUserBooks([FromQuery] string? username)
         {
             return _userService.ShowUserBooks(username);
         }
