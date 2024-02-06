@@ -1,0 +1,11 @@
+D:\VS Save\LibraryManagment.Entities\bin\Debug\net8.0\LibraryManagment.Entities.deps.json
+D:\VS Save\LibraryManagment.Entities\bin\Debug\net8.0\LibraryManagment.Entities.dll
+D:\VS Save\LibraryManagment.Entities\bin\Debug\net8.0\LibraryManagment.Entities.pdb
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.GeneratedMSBuildEditorConfig.editorconfig
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.AssemblyInfoInputs.cache
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.AssemblyInfo.cs
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.csproj.CoreCompileInputs.cache
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.dll
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\refint\LibraryManagment.Entities.dll
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\LibraryManagment.Entities.pdb
+D:\VS Save\LibraryManagment.Entities\obj\Debug\net8.0\ref\LibraryManagment.Entities.dll
